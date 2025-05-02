@@ -1,0 +1,25 @@
+.transcript {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.snippet {
+  margin-bottom: 1rem;
+}
+
+.speaker {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.words {
+  line-height: 1.5;
+}
+
+.active-word {
+  font-weight: bold; /* Make the word bold */
+  transform: scale(1.1); /* Slightly enlarge the word */
+  transition: transform 0.2s ease, font-size 0.2s ease; /* Smooth transition */
+  border-radius: 3px;
+  padding: 0 2px;
+}
