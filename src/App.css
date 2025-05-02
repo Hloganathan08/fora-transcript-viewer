@@ -1,129 +1,196 @@
+/* Global Theme Variables */
+:root {
+  --primary-color: #007bff; /* Blue */
+  --secondary-color: #6c757d; /* Gray */
+  --background-color: #f9f9f9; /* Light background */
+  --text-color: #333; /* Dark text */
+  --border-color: #ddd; /* Light border */
+  --hover-color: rgba(0, 123, 255, 0.1); /* Light blue hover */
+  --font-family: 'Roboto', sans-serif; /* Modern font */
+  --font-size-base: 16px;
+  --spacing: 16px;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --primary-color: #0d6efd; /* Lighter blue */
+  --secondary-color: #adb5bd; /* Lighter gray */
+  --background-color: #212529; /* Dark background */
+  --text-color: #f8f9fa; /* Light text */
+  --border-color: #343a40; /* Dark border */
+  --hover-color: rgba(13, 110, 253, 0.2); /* Light blue hover */
+}
+
+/* Global Styles */
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--text-color);
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+h1 {
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: var(--spacing);
+}
+
+p {
+  margin: 0 0 var(--spacing);
+}
+
+.no-results {
+  text-align: center;
+  color: var(--secondary-color);
+  font-style: italic;
+}
+
 /* ————————————————————————————————————————
    ROOT + LAYOUT
    ———————————————————————————————————————— */
-   #root {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
-    font-family: Arial, sans-serif;
-    color: white;
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+.loading {
+  color: #ccc;
+  font-size: 1.2rem;
+}
+
+/* Layout for Main Content */
+.app-layout {
+  display: flex;
+  gap: 2rem; /* Space between transcript and stats */
+  margin-top: 2rem;
+}
+
+/* Transcript Section */
+.transcript-section {
+  flex: 2; /* Take up more space */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Stats Section */
+.stats-section {
+  flex: 1; /* Take up less space */
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: var(--spacing);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 80vh; /* Limit height */
+  overflow-y: auto; /* Scroll if content overflows */
+}
+
+/* ————————————————————————————————————————
+   AUDIO PLAYER
+   ———————————————————————————————————————— */
+.audio-player {
+  width: 100%;
+  margin: 1rem 0 2rem;
+}
+
+
+/* ————————————————————————————————————————
+   TRANSCRIPT BOX
+   ———————————————————————————————————————— */
+.transcript-box {
+  max-width: 80ch;             /* wrap at ~80 characters */
+  margin: 0 auto 2rem;
+  padding: 1rem;
+  border: 1px solid #666;
+  border-radius: 8px;
+  background: #222;
+
+  max-height: 60vh;            /* vertical limit */
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  white-space: normal;         /* normal wrapping */
+  overflow-wrap: break-word;
+  word-break: break-word;
+
+  line-height: 1.5;
+  text-align: left;
+}
+.transcript-box p {
+  margin-bottom: 1rem;
+}
+
+.theme-toggle {
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background-color: var(--hover-color);
+  color: var(--primary-color);
+}
+
+/* ————————————————————————————————————————
+   CLICKABLE WORD STYLING
+   ———————————————————————————————————————— */
+.word {
+  cursor: pointer;
+  margin-right: 4px;
+}
+.word:hover {
+  background: rgba(100, 100, 255, 0.2);
+  border-radius: 3px;
+}
+
+/* ————————————————————————————————————————
+   (Optional) Vite + React Demo Styles
+   ———————————————————————————————————————— */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+@keyframes logo-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
   }
-  
-  .loading {
-    color: #ccc;
-    font-size: 1.2rem;
+}
+.card {
+  padding: 2em;
+}
+.read-the-docs {
+  color: #888;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column; /* Stack sections vertically */
   }
-  
-  /* ————————————————————————————————————————
-     AUDIO PLAYER
-     ———————————————————————————————————————— */
-  .audio-player {
-    width: 100%;
-    margin: 1rem 0 2rem;
+
+  .stats-section {
+    max-height: none; /* Remove height limit */
   }
-  
-  /* ————————————————————————————————————————
-     SPEAKER STATS
-     ———————————————————————————————————————— */
-  .stats-list {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 2rem;
-  }
-  .stats-list li {
-    margin: 0.25rem 0;
-  }
-  
-  /* ————————————————————————————————————————
-     FILTER CONTROLS
-     ———————————————————————————————————————— */
-  .filters {
-    display: flex;
-    justify-content: center;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  .filters label {
-    display: flex;
-    flex-direction: column;
-    font-size: 0.9rem;
-  }
-  .filters select,
-  .filters input {
-    margin-top: 0.25rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    border: none;
-    font-size: 1rem;
-  }
-  
-  /* ————————————————————————————————————————
-     TRANSCRIPT BOX
-     ———————————————————————————————————————— */
-  .transcript-box {
-    max-width: 80ch;             /* wrap at ~80 characters */
-    margin: 0 auto 2rem;
-    padding: 1rem;
-    border: 1px solid #666;
-    border-radius: 8px;
-    background: #222;
-  
-    max-height: 60vh;            /* vertical limit */
-    overflow-y: auto;
-    overflow-x: hidden;
-  
-    white-space: normal;         /* normal wrapping */
-    overflow-wrap: break-word;
-    word-break: break-word;
-  
-    line-height: 1.5;
-    text-align: left;
-  }
-  .transcript-box p {
-    margin-bottom: 1rem;
-  }
-  
-  /* ————————————————————————————————————————
-     CLICKABLE WORD STYLING
-     ———————————————————————————————————————— */
-  .word {
-    cursor: pointer;
-    margin-right: 4px;
-  }
-  .word:hover {
-    background: rgba(100, 100, 255, 0.2);
-    border-radius: 3px;
-  }
-  
-  /* ————————————————————————————————————————
-     (Optional) Vite + React Demo Styles
-     ———————————————————————————————————————— */
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.react:hover {
-    filter: drop-shadow(0 0 2em #61dafbaa);
-  }
-  @keyframes logo-spin {
-    from { transform: rotate(0deg); }
-    to   { transform: rotate(360deg); }
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    a:nth-of-type(2) .logo {
-      animation: logo-spin infinite 20s linear;
-    }
-  }
-  .card {
-    padding: 2em;
-  }
-  .read-the-docs {
-    color: #888;
-  }
-  
+}

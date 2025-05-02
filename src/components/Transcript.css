@@ -1,25 +1,89 @@
+/* Transcript Container */
 .transcript {
-  max-height: 400px;
+  max-height: 500px;
   overflow-y: auto;
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: var(--spacing);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
 }
 
+.transcript:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Individual Snippet */
 .snippet {
-  margin-bottom: 1rem;
+  margin-bottom: calc(var(--spacing) / 2);
+  padding: calc(var(--spacing) / 2);
+  border-radius: 6px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
+.snippet:hover {
+  background-color: var(--hover-color);
+  transform: translateY(-2px);
+}
+
+/* Active Snippet */
+.active-snippet {
+  background-color: var(--hover-color);
+  border-left: 4px solid var(--primary-color);
+  padding-left: calc(var(--spacing) / 2);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Speaker Name */
 .speaker {
   font-weight: bold;
-  margin-bottom: 0.5rem;
+  color: var(--text-color);
+  margin-bottom: calc(var(--spacing) / 4);
+  font-size: 1rem;
 }
 
+/* Words in the Transcript */
 .words {
-  line-height: 1.5;
+  line-height: 1.8;
+  font-size: 1rem;
+  color: var(--text-color);
 }
 
+/* Active Word */
 .active-word {
-  font-weight: bold; /* Make the word bold */
-  transform: scale(1.1); /* Slightly enlarge the word */
-  transition: transform 0.2s ease, font-size 0.2s ease; /* Smooth transition */
-  border-radius: 3px;
-  padding: 0 2px;
+  color: var(--primary-color);
+  font-weight: bold;
+  text-decoration: underline;
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+/* Scrollbar Styling */
+.transcript::-webkit-scrollbar {
+  width: 8px;
+}
+
+.transcript::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 4px;
+}
+
+.transcript::-webkit-scrollbar-thumb:hover {
+  background-color: var(--primary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .transcript {
+    max-height: 300px;
+    padding: 12px;
+  }
+
+  .words {
+    font-size: 0.9rem;
+  }
+
+  .speaker {
+    font-size: 0.9rem;
+  }
 }

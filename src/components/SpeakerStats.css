@@ -1,0 +1,27 @@
+
+/* ————————————————————————————————————————
+   SPEAKER STATS
+   ———————————————————————————————————————— */
+   .stats-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .stats-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .stats-list li:last-child {
+    border-bottom: none;
+  }
+  .stats-list .speaker-name {
+    font-weight: bold;
+    color: var(--primary-color);
+  }
+  .stats-list .stats-value {
+    color: var(--text-color);
+    font-weight: normal;
+  }
+  

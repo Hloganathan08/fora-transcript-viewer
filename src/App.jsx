@@ -14,6 +14,13 @@ export default function App() {
   const [selectedSpeaker, setSelectedSpeaker] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentTime, setCurrentTime] = useState(0);
+  const [theme, setTheme] = useState('light');
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
 
   // Compute stats per speaker
   const stats = useMemo(() => {
@@ -53,32 +60,48 @@ export default function App() {
 
   return (
     <div id="root">
-      <h1>Fora Transcript Viewer</h1>
+      <header>
+        <h1>Fora Transcript Viewer</h1>
+        <button onClick={toggleTheme} className="theme-toggle">
+          Switch to {theme === 'light' ? 'Dark' : 'Light'} Mode
+        </button>
+      </header>
 
-      <AudioPlayer
-        audioUrl={conversation?.audio_url}
-        onTimeUpdate={handleTimeUpdate}
-      />
+      <main className="app-layout">
+    
+        {/* Transcript Section */}
+        <section className="transcript-section">
+          <AudioPlayer
+            audioUrl={conversation?.audio_url}
+            onTimeUpdate={handleTimeUpdate}
+          />
 
-      <SpeakerStats stats={stats} />
+          {/* Filters Section */}
+          <Filters
+            speakers={Object.keys(stats)}
+            selectedSpeaker={selectedSpeaker}
+            onSpeakerChange={setSelectedSpeaker}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+          />
 
-      <Filters
-        speakers={speakers}
-        selectedSpeaker={selectedSpeaker}
-        onSpeakerChange={setSelectedSpeaker}
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-      />
 
-      {filteredSnippets.length > 0 ? (
-        <Transcript
-          snippets={filteredSnippets}
-          currentTime={currentTime}
-          onWordClick={(t) => handleTimeUpdate(t)}
-        />
-      ) : (
-        <p className="no-results">Found nothing</p>
-      )}
+          {filteredSnippets.length > 0 ? (
+            <Transcript
+              snippets={filteredSnippets}
+              currentTime={currentTime}
+              onWordClick={(t) => handleTimeUpdate(t)}
+            />
+          ) : (
+            <p className="no-results">Found nothing</p>
+          )}
+        </section>
+
+        {/* Stats Section */}
+        <aside className="stats-section">
+          <SpeakerStats stats={stats} />
+        </aside>
+      </main>
     </div>
   );
 }
