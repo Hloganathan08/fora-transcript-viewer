@@ -1,130 +1,85 @@
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import './App.css';
+import { useConversationData } from './hooks/useConversationData';
+import AudioPlayer from './components/AudioPlayer';
+import SpeakerStats from './components/SpeakerStats';
+import Filters from './components/Filters';
+import Transcript from './components/Transcript';
 
-function App() {
-  const [conversation, setConversation] = useState(null);
+export default function App() {
+  // Load conversation, loading & error
+  const { conversation, loading, error } = useConversationData();
+
+  // Filter states
   const [selectedSpeaker, setSelectedSpeaker] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const audioRef = useRef();
+  const [currentTime, setCurrentTime] = useState(0);
 
-  // 1️⃣ Load the JSON
-  useEffect(() => {
-    fetch('/conversation.json')
-      .then(res => res.json())
-      .then(data => setConversation(data))
-      .catch(err => console.error('Failed to load JSON:', err));
-  }, []);
-
-  // 2️⃣ Click a word → seek audio
-  const onWordClick = (time) => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = time;
-      audioRef.current.play();
-    }
-  };
-
-  // 3️⃣ Compute stats: total words & total time per speaker
+  // Compute stats per speaker
   const stats = useMemo(() => {
-    if (!conversation) return {};
+    if (!conversation || !conversation.snippets) return {}; // Guard clause
     return conversation.snippets.reduce((acc, snip) => {
-      const name = snip.speaker_name;
-      const duration = snip.audio_end_offset - snip.audio_start_offset;
-      const wordsCount = snip.words.length;
-      if (!acc[name]) acc[name] = { time: 0, words: 0 };
-      acc[name].time += duration;
-      acc[name].words += wordsCount;
+      const who = snip.speaker_name;
+      const dur = snip.audio_end_offset - snip.audio_start_offset;
+      const cnt = snip.words.length;
+      if (!acc[who]) acc[who] = { words: 0, time: 0 };
+      acc[who].words += cnt;
+      acc[who].time += dur;
       return acc;
     }, {});
   }, [conversation]);
 
-  // 4️⃣ List of speakers (for the dropdown)
+  // Speaker list
   const speakers = useMemo(() => Object.keys(stats), [stats]);
 
-  // 5️⃣ Filtered snippets by speaker & search term
+  // Filtered snippets
   const filteredSnippets = useMemo(() => {
-    if (!conversation) return [];
+    if (!conversation || !conversation.snippets) return []; // Guard clause
     return conversation.snippets.filter((snip) => {
-      const bySpeaker =
-        selectedSpeaker === '' || snip.speaker_name === selectedSpeaker;
-      const bySearch =
-        searchTerm === '' ||
-        snip.words.some(([w]) =>
-          w.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+      const bySpeaker = !selectedSpeaker || snip.speaker_name === selectedSpeaker;
+      const bySearch = !searchTerm || snip.words.some(([w]) =>
+        w.toLowerCase().includes(searchTerm.toLowerCase())
+      );
       return bySpeaker && bySearch;
     });
   }, [conversation, selectedSpeaker, searchTerm]);
 
-  if (!conversation) {
-    return <p className="loading">Loading conversation…</p>;
-  }
+  // Handle audio time update
+  const handleTimeUpdate = (time) => setCurrentTime(time);
+
+  // Loading and error checks (moved after hooks)
+  if (loading) return <p className="loading">Loading…</p>;
+  if (error) return <p className="error">Error: {error}</p>;
 
   return (
     <div id="root">
       <h1>Fora Transcript Viewer</h1>
-      <audio
-        ref={audioRef}
-        controls
-        src={conversation.audio_url}
-        className="audio-player"
+
+      <AudioPlayer
+        audioUrl={conversation?.audio_url}
+        onTimeUpdate={handleTimeUpdate}
       />
 
-      <h2>Speaker Stats</h2>
-      <ul className="stats-list">
-        {speakers.map((name) => (
-          <li key={name}>
-            <strong>{name}</strong>: {stats[name].words} words,{' '}
-            {stats[name].time.toFixed(1)}s
-          </li>
-        ))}
-      </ul>
+      <SpeakerStats stats={stats} />
 
-      <div className="filters">
-        <label>
-          Speaker:
-          <select
-            value={selectedSpeaker}
-            onChange={(e) => setSelectedSpeaker(e.target.value)}
-          >
-            <option value="">All</option>
-            {speakers.map((name) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </select>
-        </label>
+      <Filters
+        speakers={speakers}
+        selectedSpeaker={selectedSpeaker}
+        onSpeakerChange={setSelectedSpeaker}
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+      />
 
-        <label>
-          Search:
-          <input
-            type="text"
-            placeholder="Filter transcript…"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </label>
-      </div>
-
-      <h2>Transcript</h2>
-      <div className="transcript-box">
-        {filteredSnippets.map((snippet, i) => (
-          <p key={i}>
-            <strong>{snippet.speaker_name}:</strong>{' '}
-            {snippet.words.map(([word, start], j) => (
-              <span
-                key={j}
-                onClick={() => onWordClick(start)}
-                className="word"
-              >
-                {word}
-              </span>
-            ))}
-          </p>
-        ))}
-      </div>
+      {filteredSnippets.length > 0 ? (
+        <Transcript
+          snippets={filteredSnippets}
+          currentTime={currentTime}
+          onWordClick={(t) => handleTimeUpdate(t)}
+        />
+      ) : (
+        <p className="no-results">Found nothing</p>
+      )}
     </div>
   );
 }
 
-export default App;
